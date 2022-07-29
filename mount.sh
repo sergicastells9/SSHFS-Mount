@@ -83,35 +83,56 @@ mount_server () {
   fi
 }
 
+fix () {
+  echo "Fixing mount issues..."
+  pg=$(pgrep sshfs)
+  procs=()
+
+  IFS=" "
+  for id in ${pg}; do
+    procs+=("${id}")
+  done
+
+  for proc in ${procs}; do
+    echo "Killing sshfs process ${proc}."
+    kill -9 ${proc}
+  done
+
+  echo "All sshfs processes killed."
+}
+
 # Main Script
 echo "Which server do you want to mount?"
-select svr in "lxplus" "EARTH" "UNMOUNT"; do
+select svr in "lxplus" "earth" "UNMOUNT" "FIX"; do
   case $svr in
     lxplus)
       connect="lxplus"
       get_user
       break;;
     earth)
-      connect="EARTH"
+      connect="earth"
       get_user
       break;;
     UNMOUNT)
       connect="UNMOUNT"
       echo ""
       break;;
+    FIX)
+      connect="FIX"
+      echo ""
+      break;;
   esac
 done
 
-if [ "$connect" == "lxplus" ]; then
+if [ "${connect}" == "lxplus" ]; then
   PTH="${AFS}/${USER:0:1}/${USER}/"
   SERVER="lxplus.cern.ch"
   print_vars
-fi
-if [ "$connect" == "EARTH" ]; then
+elif [ "${connect}" == "earth" ]; then
   echo "Have you checked your VPN? [y/n]"
   read vpn
   vpn=$(echo $vpn | tr '[:upper:]' '[:lower:]')
-  if [ "$vpn" == "y" ]; then
+  if [ "${vpn}" == "y" ]; then
     PTH="${AFS}/${USER:0:1}/${USER}/"
     SERVER="earth.crc.nd.edu"
     print_vars
@@ -119,9 +140,10 @@ if [ "$connect" == "EARTH" ]; then
   if [ "$vpn" != "y" ]; then
     echo "Start VPN first!"
   fi
-fi
-if [ "$connect" == "UNMOUNT" ]; then
+elif [ "${connect}" == "UNMOUNT" ]; then
   unmount
+elif [ "${connect}" == "FIX" ]; then
+  fix
 else
   mount_server
 fi

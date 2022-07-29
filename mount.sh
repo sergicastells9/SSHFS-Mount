@@ -16,24 +16,16 @@ add_mount () {
   tmp=$((${#MOUNT} - ${#num_mnts}))
   MOUNT="${MOUNT:0:$((${tmp}-1))}_${num_mnts}"
   if [ $((${num_mnts} - 1)) -lt ${MAX_MOUNTS} ] && [[ ! -d "${MOUNT}" ]]; then
-    echo "mkdir ${MOUNT}"
     mkdir ${MOUNT}
-    return 0
-  elif [[ -d "${MOUNT}" ]]; then
-    return 0
-  else
-    return 1
   fi
 }
 
 check_mount () {
-  if [ ! $(mount | grep -c ${USER}@${SERVER}) ]; then
-    return 0
+  if [ $(mount | grep -c ${USER}@${SERVER}) -eq 1 ]; then
+    echo 0
   else
-    while [ $(add_mount) ]; do
-      continue
-    done
-    return 1
+    add_mount
+    echo 1
   fi
 }
 
@@ -57,30 +49,28 @@ get_user () {
 }
 
 unmount () {
-  if [ ! $(check_mount) ]; then
-    echo "Nothing to unmount."
-  else
-    num_mnts=$(mount | grep -c ${MOUNT})
+  for i in $(seq 1 ${MAX_MOUNTS}); do
+    MOUNT="${MOUNT:0:$(($((${#MOUNT}-1-${#i}))))}_${i}"
 
-    for i in {1..${num_mnts}}; do
-      num_mnts=$((${num_mnts} + 1))
-      tmp=$((${#MOUNT} - ${#num_mnts}))
-      MOUNT="${MOUNT:0:$((${tmp}))}_${num_mnts}"
-
+    if [ $(mount | grep -c ${MOUNT}) -eq 0 ]; then
+      echo "${MOUNT} directory not mounted."
+    else
       echo "Unmounting ${MOUNT} directory..."
       diskutil unmount force ${MOUNT} &&
       echo "Unmouted successfully." ||
-      echo "Trying with sudo..." &&
-      sudo diskutil unmount force ${MOUNT}
-    done
-  fi
+      $(echo "Trying with sudo..." &&
+      sudo diskutil unmount force ${MOUNT} &&
+      echo "Unmounted successfully.")
+    fi
+  done
 }
 
 mount_server () {
   echo ""
   echo "Mounting ${SERVER}..."
 
-  if [ ! $(check_mount) ]; then
+  echo $(check_mount)
+  if [ $(check_mount) -eq 1 ]; then
     num_mnts=$(($(mount | grep -c ${MOUNT}) + 1))
     tmp=$((${#MOUNT} - ${#num_mnts}))
     MOUNT="${MOUNT:0:$((${tmp}-1))}_${num_mnts}"
@@ -131,11 +121,7 @@ if [ "$connect" == "EARTH" ]; then
   fi
 fi
 if [ "$connect" == "UNMOUNT" ]; then
-  if [ $(check_mount) ]; then
-    unmount
-  else
-    break
-  fi
+  unmount
 else
   mount_server
 fi

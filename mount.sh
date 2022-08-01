@@ -128,6 +128,7 @@ if [ "${connect}" == "lxplus" ]; then
   PTH="${AFS}/${USER:0:1}/${USER}/"
   SERVER="lxplus.cern.ch"
   print_vars
+  mount_server
 elif [ "${connect}" == "earth" ]; then
   echo "Have you checked your VPN? [y/n]"
   read vpn
@@ -136,6 +137,7 @@ elif [ "${connect}" == "earth" ]; then
     PTH="${AFS}/${USER:0:1}/${USER}/"
     SERVER="earth.crc.nd.edu"
     print_vars
+    mount_server
   fi
   if [ "$vpn" != "y" ]; then
     echo "Start VPN first!"
@@ -144,6 +146,4 @@ elif [ "${connect}" == "UNMOUNT" ]; then
   unmount
 elif [ "${connect}" == "FIX" ]; then
   fix
-else
-  mount_server
 fi

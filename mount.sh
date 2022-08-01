@@ -68,8 +68,7 @@ unmount () {
 mount_server () {
   echo ""
   echo "Mounting ${SERVER}..."
-
-  echo $(check_mount)
+  
   if [ $(check_mount) -eq 1 ]; then
     num_mnts=$(($(mount | grep -c ${MOUNT}) + 1))
     tmp=$((${#MOUNT} - ${#num_mnts}))

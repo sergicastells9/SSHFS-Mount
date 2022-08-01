@@ -49,7 +49,7 @@ get_user () {
 }
 
 unmount () {
-  for i in $(seq 1 ${MAX_MOUNTS}); do
+  for (( i=1; i<=${MAX_MOUNTS}; i++ )); do
     MOUNT="${MOUNT:0:$(($((${#MOUNT}-1-${#i}))))}_${i}"
 
     if [ $(mount | grep -c ${MOUNT}) -eq 0 ]; then
@@ -68,7 +68,7 @@ unmount () {
 mount_server () {
   echo ""
   echo "Mounting ${SERVER}..."
-  
+
   if [ $(check_mount) -eq 1 ]; then
     num_mnts=$(($(mount | grep -c ${MOUNT}) + 1))
     tmp=$((${#MOUNT} - ${#num_mnts}))

@@ -48,7 +48,7 @@ get_user () {
   fi
 }
 
-unmount () {
+remove_mount () {
   for (( i=1; i<=${MAX_MOUNTS}; i++ )); do
     MOUNT="${MOUNT:0:$(($((${#MOUNT}-1-${#i}))))}_${i}"
 
@@ -57,12 +57,13 @@ unmount () {
     else
       echo "Unmounting ${MOUNT} directory..."
       diskutil unmount force ${MOUNT} ||
-      $(echo "Trying with sudo..." &&
+      $(echo "Trying with sudo...") &&
       sudo diskutil unmount force ${MOUNT}
     fi
   done
 }
 
+echo "Test"
 mount_server () {
   echo ""
   echo "Mounting ${SERVER}..."
@@ -140,7 +141,7 @@ elif [ "${connect}" == "earth" ]; then
     echo "Start VPN first!"
   fi
 elif [ "${connect}" == "UNMOUNT" ]; then
-  unmount
+  remove_mount
 elif [ "${connect}" == "FIX" ]; then
   fix
 fi

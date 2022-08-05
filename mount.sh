@@ -74,7 +74,7 @@ mount_server () {
     MOUNT="${MOUNT:0:$((${tmp}-1))}_${num_mnts}"
 
     echo "sshfs ${USER}@${SERVER}:${PTH} ${MOUNT} -o reconnect -o defer_permissions -o volname=\"${USER}@${SERVER}\""
-    sshfs ${USER}@${SERVER}:${PTH} ${MOUNT} -o reconnect -o defer_permissions -o volname="${USER}@${SERVER}" &&
+    sshfs ${USER}@${SERVER}:${PTH} ${MOUNT} -o defer_permissions -o volname="${USER}@${SERVER}" &&
     echo "Mounted sucessfully."
   else
     echo "Server ${SERVER} already mounted to ${MOUNT}."

@@ -55,7 +55,7 @@ remove_mount () {
     if [ $(mount | grep -c ${MOUNT}) -eq 0 ]; then
       echo "${MOUNT} directory not mounted."
     else
-      echo "Unmounting ${MOUNT} directory..."
+      echo "Unmounting ${MOUNT} directory..." &&
       diskutil unmount force ${MOUNT} ||
       $(echo "Trying with sudo...") &&
       sudo diskutil unmount force ${MOUNT}

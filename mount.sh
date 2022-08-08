@@ -56,9 +56,7 @@ remove_mount () {
       echo "${MOUNT} directory not mounted."
     else
       echo "Unmounting ${MOUNT} directory..." &&
-      diskutil unmount force ${MOUNT} ||
-      $(echo "Trying with sudo...") &&
-      sudo diskutil unmount force ${MOUNT}
+      diskutil unmount force ${MOUNT}
     fi
   done
 }

@@ -81,19 +81,21 @@ mount_server () {
 
 fix () {
   echo "Fixing mount issues..."
-  pg=$(pgrep sshfs)
-  procs=()
+  #pg=$(pgrep sshfs)
+  #procs=()
 
-  IFS=" "
-  for id in ${pg}; do
-    procs+=("${id}")
-  done
+  #IFS=" "
+  #for id in ${pg}; do
+    #procs+=("${id}")
+  #done
 
-  for proc in ${procs}; do
-    echo "Killing sshfs process ${proc}."
-    kill -9 ${proc}
-  done
+  #for proc in ${procs}; do
+    #echo "Killing sshfs process ${proc}."
+    #kill -9 ${proc}
+  #done
 
+  sudo killall -9 sshfs
+  remove_mount
   echo "All sshfs processes killed."
 }
 

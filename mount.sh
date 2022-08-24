@@ -5,8 +5,7 @@ connect=""
 MOUNT="${HOME}/mnt_1"
 USER=""
 SERVER=""
-AFS="/afs/cern.ch/user"
-EOS="/eos/user/"
+PTH_EOS=""
 PTH=""
 MAX_MOUNTS=2
 
@@ -61,7 +60,6 @@ remove_mount () {
   done
 }
 
-echo "Test"
 mount_server () {
   echo ""
   echo "Mounting ${SERVER}..."
@@ -82,15 +80,15 @@ mount_server () {
 fix () {
   echo "Fixing mount issues..."
 
-  sudo killall -9 sshfs
-  echo "All sshfs processes killed."
-  remove_mount &&
+  ( sudo killall -9 sshfs &&
+  echo "All sshfs processes killed." &&
+  remove_mount ) &&
   echo "Mount issue fixed."
 }
 
 # Main Script
 echo "Which server do you want to mount?"
-select svr in "lxplus" "earth" "UNMOUNT" "FIX"; do
+select svr in "lxplus" "earth" "UNMOUNT" "FIX" "quit"; do
   case $svr in
     lxplus)
       connect="lxplus"
@@ -108,12 +106,16 @@ select svr in "lxplus" "earth" "UNMOUNT" "FIX"; do
       connect="FIX"
       echo ""
       break;;
+    quit)
+      break;;
   esac
 done
 
 if [ "${connect}" == "lxplus" ]; then
-  PTH="${AFS}/${USER:0:1}/${USER}/"
+  PTH_EOS="/eos/user/${USER:0:1}/${USER}/"
+  PTH="/afs/cern.ch/user/${USER:0:1}/${USER}/"
   SERVER="lxplus.cern.ch"
+  # SET PTH TO PTH_EOS HERE FOR EOS MOUNTING
   print_vars
   mount_server
 elif [ "${connect}" == "earth" ]; then
@@ -121,8 +123,10 @@ elif [ "${connect}" == "earth" ]; then
   read vpn
   vpn=$(echo $vpn | tr '[:upper:]' '[:lower:]')
   if [ "${vpn}" == "y" ]; then
-    PTH="${AFS}/${USER:0:1}/${USER}/"
+    PTH_EOS="/eos/user/${USER:0:1}/${USER}/"
+    PTH="/afs/crc.nd.edu/user/${USER:0:1}/${USER}/"
     SERVER="earth.crc.nd.edu"
+    # Do PTH=PTH_EOS here for EOS mounting
     print_vars
     mount_server
   fi

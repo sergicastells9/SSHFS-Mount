@@ -115,7 +115,7 @@ if [ "${connect}" == "lxplus" ]; then
   PTH_EOS="/eos/user/${USER:0:1}/${USER}/"
   PTH="/afs/cern.ch/user/${USER:0:1}/${USER}/"
   SERVER="lxplus.cern.ch"
-  # SET PTH TO PTH_EOS HERE FOR EOS MOUNTING
+  # Do PTH=PTH_EOS here for EOS mounting
   print_vars
   mount_server
 elif [ "${connect}" == "earth" ]; then

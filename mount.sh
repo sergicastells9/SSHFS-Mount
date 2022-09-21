@@ -83,6 +83,9 @@ fix () {
   ( sudo killall -9 sshfs &&
   echo "All sshfs processes killed." &&
   remove_mount ) &&
+  killall Finder &&
+  open /System/Library/CoreServices/Finder.app &&
+  echo "Reset Finder" &&
   echo "Mount issue fixed."
 }
 
